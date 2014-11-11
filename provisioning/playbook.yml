@@ -192,20 +192,7 @@
         - pygments
         - nose
         - readline
-
-    # Needed because a newer version of freetype is needed
-    # See: http://matplotlib.org/users/installing.html#required-dependencies
-    # This is a stop gap until either of the following:
-    # - v1.4.1 is released, which allows older versions of freetype
-    # - I write something to upgrade freetype version (which I think I've done before...)
-    # FIXME: This is still failing; UnicodeDecodeError
-    #- name: Install older matplotlib
-    #  pip:
-    #    name: matplotlib
-    #    state: present
-    #    version: 1.3.1
-    #    virtualenv: /var/venv
-    #    virtualenv_command: /usr/local/bin/virtualenv-2.7
+        - matplotlib
 
     # FIXME: Change to work with requirements file
     - name: Install web Python packages
@@ -259,7 +246,7 @@
         group: "{{ dst_username }}"
         mode: 0644
         backup: true
-    
+
     # Setup files from https://github.com/Supervisor/initscripts/
     - name: Make sure that the supervisord log directory exists
       file:
@@ -284,7 +271,7 @@
                 dest=/etc/supervisord.conf
                 owner=root group=root mode=0755
     - name: Ensure supervisord is running (and automatically at boot time)
-      action: service
+      service:
         name: supervisord
         state: started
         enabled: yes
