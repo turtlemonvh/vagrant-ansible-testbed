@@ -29,12 +29,12 @@
   yum:
     pkg: "{{ item }}"
     state: latest
-      with_items:
-        - mysql
-        - mysql-devel
-        - postgresql
-        - postgresql-devel
-        - postgresql-libs
+  with_items:
+    - mysql
+    - mysql-devel
+    - postgresql
+    - postgresql-devel
+    - postgresql-libs
 
 - name: Install Python packages for connecting to service API
   pip:
