@@ -10,7 +10,7 @@ Ansible playbooks are used to launch docker services
 
 The vagrantfile was initialized with `vagrant init chef/centos-6.5`
 
-## Running
+## Using this box
 
 Start Vagrant
 
@@ -34,13 +34,6 @@ View the notebooks at http://127.0.0.1:12381/tree
 View the supervisord control interface at http://127.0.0.1:12382/
 
 
-## Installed
-
-- ipython notebook server
-- science python packages
-- supervisord
-    - for managing ipython notebook, and eventually docker instances
-
 ## Gotchas
 
 Sometimes the supervisor service needs to be bounced again to get it to start correctly.
@@ -54,22 +47,67 @@ Shared folders
 - ipython notebooks
 - test data
 
+## Installed
+
+- ipython notebook server
+- science python packages
+- supervisord
+    - for managing ipython notebook, and eventually docker instances
+
+## Docker
+
+A few come pre-installed.  Right now each has to be started manually.
+
+
+### Elasticsearch
+
+Links
+* https://github.com/dockerfile/elasticsearch
+* https://registry.hub.docker.com/u/dockerfile/elasticsearch/
+
+Run with
+
+    sudo docker run -d -p 9200:9200 -p 9300:9300 dockerfile/elasticsearch
+
+### MongoDB
+
+Links
+* https://registry.hub.docker.com/_/mongo/
+
+Run with
+
+    sudo docker run --name mongotest -d mongo
+
+### Postgresql
+
+Links
+* https://registry.hub.docker.com/_/postgres/
+
+### MySQL
+
+Links
+* https://registry.hub.docker.com/_/mysql/
+
+
+### Redis
+
+Links
+* https://registry.hub.docker.com/_/redis/
+
+
+### TO COME
+
+Services
+* Heka: https://github.com/ianneub/docker-heka
+
+
+I will also add an example notebook for each datastore.
+
+
 ## TODO
 
 - install silver searcher
-- break up into smaller playbooks
-- write python installation as a separate task
 - use requirements files instead of playbooks for setting up virtualenvs
-- install docker
-    - http://wiki.centos.org/Cloud/Docker
-    - http://www.liquidweb.com/kb/how-to-install-docker-on-centos-6/
-- setup some docker images
-    - https://github.com/ianneub/docker-heka
-    - https://github.com/dockerfile/elasticsearch, https://registry.hub.docker.com/u/dockerfile/elasticsearch/
-    - https://registry.hub.docker.com/_/redis/
-    - https://registry.hub.docker.com/_/mysql/
-    - https://registry.hub.docker.com/_/mongo/
-    - https://registry.hub.docker.com/_/postgres/
 - set up helper tasks for creating new docker instances with ansible
 - configure dev env
     - node
@@ -79,3 +117,4 @@ Shared folders
     - scss stuff
 - packer
     - maybe this would make more sense to keep outside...
+

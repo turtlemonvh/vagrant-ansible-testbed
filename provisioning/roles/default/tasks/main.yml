@@ -128,3 +128,9 @@
 - name: Update search database
   shell: updatedb
 
+- name: Install htop
+  yum:
+    pkg: htop
+    state: latest
+
+

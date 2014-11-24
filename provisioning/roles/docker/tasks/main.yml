@@ -11,3 +11,42 @@
     state: restarted
     enabled: yes
 
+# Add some docker images
+# > sudo docker images
+# https://github.com/dockerfile/elasticsearch/
+# Elasticsearch: port 9200, 9300
+# https://registry.hub.docker.com/_/mongo/
+# Mongo: port 27017
+- command: "/usr/bin/docker pull {{item}}"
+  with_items:
+    - dockerfile/elasticsearch
+    - mongo
+    - mysql
+    - redis
+    - postgres
+
+- name: Install database driver libraries
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+      with_items:
+        - mysql
+        - mysql-devel
+        - postgresql
+        - postgresql-devel
+        - postgresql-libs
+
+- name: Install Python packages for connecting to service API
+  pip:
+    name: "{{ item }}"
+    state: latest
+    virtualenv: /var/venv
+    virtualenv_command: "{{ venv27 }}"
+  with_items:
+    - elasticsearch
+    - pymongo
+    - mongoengine
+    - redis
+    - MySQL-python
+
+
