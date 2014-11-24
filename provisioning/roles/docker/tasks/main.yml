@@ -1,0 +1,13 @@
+---
+
+- name: Install docker
+  yum:
+    pkg: "docker-io"
+    state: latest
+
+- name: Ensure docker is running (and automatically at boot time)
+  service:
+    name: docker
+    state: restarted
+    enabled: yes
+

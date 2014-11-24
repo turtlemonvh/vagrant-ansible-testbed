@@ -1,0 +1,9 @@
+---
+ansible_ssh_user: vagrant
+dst_username: vagrant
+shared_folders:
+    data: /vagrant_data
+    notebooks: /vagrant_notebooks
+venv27: /usr/local/bin/virtualenv-2.7
+easy_install27: /usr/local/bin/easy_install-2.7
+home_folder: /home/vagrant

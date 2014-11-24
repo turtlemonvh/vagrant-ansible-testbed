@@ -1,0 +1,23 @@
+---
+
+# Install yaml
+- shell: wget http://pyyaml.org/download/libyaml/yaml-0.1.6.tar.gz
+  args:
+    chdir: /tmp
+    creates: /tmp/yaml-0.1.6.tar.gz
+- shell: tar xzvf yaml-0.1.6.tar.gz
+  args:
+    chdir: /tmp
+    creates: /tmp/yaml-0.1.6/
+- shell: ./configure --prefix=/usr/local
+  args:
+    chdir: /tmp/yaml-0.1.6/
+    creates: /tmp/yaml-0.1.6/Makefile
+- shell: make
+  args:
+    chdir: /tmp/yaml-0.1.6
+    creates: /tmp/yaml-0.1.6/yaml-0.1.pc
+- shell: make install
+  args:
+    chdir: /tmp/yaml-0.1.6
+    creates: /usr/local/lib/libyaml.so

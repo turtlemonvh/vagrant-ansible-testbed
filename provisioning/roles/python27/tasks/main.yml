@@ -1,0 +1,96 @@
+---
+
+# Needed for changing some configuration files
+- name: Install selinux bindings
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - libselinux-python
+
+# Try to fix unicode errors
+- name: Update bashrc
+  template:
+    src: bashrc.j2
+    dest: "/home/{{ dst_username }}/.bashrc"
+    owner: vagrant
+    group: vagrant
+    mode: 0644
+
+- name: Make bashrc active
+  shell: ". /home/{{ dst_username }}/.bashrc"
+
+# Install development tools
+# See: http://toomuchdata.com/2014/02/16/how-to-install-python-on-centos/
+- name: install the 'Development tools' package group
+  yum:
+    name: "@Development tools"
+    state: present
+
+- name: Install packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  #when: ansible_os_family == "Debian"  # Use to skip for now
+  with_items:
+    - zlib-devel
+    - bzip2-devel
+    - openssl-devel
+    - ncurses-devel
+    - sqlite-devel
+    - readline-devel
+    - tk-devel
+    - gdbm-devel
+    - db4-devel
+    - libpcap-devel
+    - xz-devel
+
+# Set up installation as shared library
+- name: Update dynamic linker path for python install
+  template:
+    src: ld.so.conf.j2
+    dest: /etc/ld.so.conf
+    owner: root
+    group: root
+    mode: 0644
+- name: Update the dynamic linker configuration
+  command: /sbin/ldconfig
+
+# Install python for science!
+# Placed in /usr/local/bin/python2.7
+# Download
+- name: Download and unzip python
+  shell: "{{ item }}"
+  args:
+    chdir: /tmp
+    creates: /tmp/Python-2.7.6
+  with_items:
+    - wget http://python.org/ftp/python/2.7.6/Python-2.7.6.tar.xz --no-check-certificate
+    - tar xvf Python-2.7.6.tar.xz
+
+# Configure and install
+- name: Install python
+  command: "{{ item }}"
+  args:
+    chdir: /tmp/Python-2.7.6
+    creates: /usr/local/bin/python2.7
+  with_items:
+    - ./configure --prefix=/usr/local --enable-unicode=ucs4 --enable-shared LDFLAGS="-Wl,-rpath /usr/local/lib"
+    - make
+    - make altinstall
+
+# https://pypi.python.org/pypi/setuptools#unix-wget
+- name: Install setuptools (includes easy_install)
+  shell: "{{ item }}"
+  args:
+    chdir: /tmp
+    creates: "{{ easy_install27 }}"
+  with_items:
+    - wget https://bootstrap.pypa.io/ez_setup.py --no-check-certificate
+    - /usr/local/bin/python2.7 ez_setup.py
+
+- name: Install virtualenv
+  easy_install:
+    name: virtualenv
+    executable: "{{ easy_install27 }}"
+

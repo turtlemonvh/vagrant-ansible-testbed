@@ -1,0 +1,24 @@
+# IPython
+- name: Make sure that the notebooks directory exists
+  file:
+    path: "{{ shared_folders.notebooks }}"
+    state: directory
+    owner: "{{ dst_username }}"
+    group: "{{ dst_username }}"
+
+- name: Make sure that the ipython config directory exists
+  file:
+    path: "/home/{{ dst_username }}/.ipython/profile_default"
+    state: directory
+    owner: "{{ dst_username }}"
+    group: "{{ dst_username }}"
+
+- name: Update IPython configuration
+  template:
+    src: ipython_notebook_config.py.j2
+    dest: "/home/{{ dst_username }}/.ipython/profile_default/ipython_notebook_config.py"
+    owner: "{{ dst_username }}"
+    group: "{{ dst_username }}"
+    mode: 0644
+    backup: true
+

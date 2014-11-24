@@ -1,0 +1,43 @@
+# Setup files from https://github.com/Supervisor/initscripts/
+- name: Make sure that the supervisord log directory exists
+  file:
+    path: /var/log/supervisord
+    state: directory
+    owner: "{{ dst_username }}"
+    group: "{{ dst_username }}"
+
+- name: Make sure that the supervisord unix socket
+  file:
+    path: /tmp/supervisor.sock
+    state: touch
+
+- name: Update supervisord initd
+  template:
+    src: initd.j2
+    dest: /etc/rc.d/init.d/supervisord
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Update supervisord sysconfig
+  template:
+    src: sysconfig.j2
+    dest: /etc/sysconfig/supervisord
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Update supervisord conf
+  template:
+    src: supervisord.conf.j2
+    dest: /etc/supervisord.conf
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Ensure supervisord is running (and automatically at boot time)
+  service:
+    name: supervisord
+    state: restarted
+    enabled: yes
+

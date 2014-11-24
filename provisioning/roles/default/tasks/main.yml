@@ -1,0 +1,130 @@
+---
+# Needed for changing some configuration files
+- name: Install selinux bindings
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - libselinux-python
+
+- include: yaml.yml
+
+# Some of these are needed for scipy stack
+# See: http://deeplearning.net/software/theano/install_centos6.html#install-centos6
+- name: Install packages
+  yum:
+    pkg: "{{ item }}"
+    state: latest
+  #when: ansible_os_family == "Debian"  # Use to skip for now
+  with_items:
+    - git
+    # Numpy and Scipy dependencies
+    - gcc
+    - gcc-gfortran
+    - gcc-c++
+    - atlas
+    - atlas-devel
+    - blas
+    - blas-devel
+    - lapack
+    - lapack-devel
+    - libxml2-devel
+    - libxslt-devel
+    - libffi-devel
+    # Command line tools
+    - mlocate
+    - python-pycurl
+    - python-devel
+    - python-setuptools
+    # Needed for matplotlib
+    - freetype
+    - freetype-devel
+    - libpng
+    - libpng-devel
+    - readline
+
+- name: Install pip
+  easy_install:
+    name: pip
+
+- name: Install util Python packages in system python
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - supervisor
+    - python-dateutil
+
+# FIXME: Change to work with requirements file
+- name: Install science Python packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+    virtualenv: /var/venv
+    virtualenv_command: "{{ venv27 }}"
+  with_items:
+    - ansible  ## Having problems with pycrypto outside of the virtualenv
+    - ipython
+    - sympy
+    - numpy
+    - scipy
+    - pandas
+    - networkx
+    - nltk
+    - scikit-learn
+    # matplotlib dependencies
+    - six
+    - python-dateutil
+    - tornado
+    # for ipython notebook
+    - pyzmq
+    - sphinx
+    - jinja2
+    - pygments
+    - nose
+    - readline
+    - matplotlib
+
+# FIXME: Change to work with requirements file
+- name: Install web Python packages
+  pip:
+    name: "{{ item }}"
+    state: latest
+    virtualenv: /var/venv
+    virtualenv_command: "{{ venv27 }}"
+  with_items:
+    - BeautifulSoup
+    - Flask
+    - Jinja2
+    - PyGithub
+    - PyYAML
+    - Werkzeug
+    - beautifulsoup4
+    - facebook-sdk
+    - feedparser
+    - google-api-python-client
+    - python-gflags
+    - httplib2
+    - oauthlib
+    - prettytable
+    - python-linkedin
+    - readline
+    - requests
+    - requests-oauthlib
+    - twitter
+    - wsgiref
+    - oauth2
+    - twitter-text-py
+
+# sudo chown -R vagrant /var/venv/
+- name: Change ownership of virtualenv folder to allow easy installs
+  file:
+    path: /var/venv/
+    group: vagrant
+    owner: vagrant
+    recurse: yes
+    state: directory
+
+- name: Update search database
+  shell: updatedb
+
